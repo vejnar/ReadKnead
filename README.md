@@ -2,9 +2,9 @@
 
 [![MPLv2](https://img.shields.io/aur/license/ReadKnead?color=1793d1&style=for-the-badge)](https://mozilla.org/MPL/2.0/)
 
-<p style="text-align:center"><i>Knead your sequencing reads before baking</i></p>
+<div style="text-align:center; margin-bottom:1rem;"><i>Knead your sequencing reads before baking</i></div>
 
-ReadKnead **clips**, **demultiplexes**, **filters** (e.g. by length), **selects** (e.g. randomly) and **renames** reads from FASTQ files.
+ReadKnead **clips**, **trims**, **demultiplexes**, **filters** (e.g. by length), **selects** (e.g. randomly) and **renames** reads from FASTQ files.
 * Choice of algorithm for trimming: fast and accurate [bit-masked k-difference matching](https://git.sr.ht/~vejnar/bktrim), Needleman–Wunsch, search or match.
 * Demultiplexing using internal barcodes (user-defined positions in the reads)
 
