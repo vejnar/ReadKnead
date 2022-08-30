@@ -131,18 +131,27 @@ func main() {
 	var err error
 	if opsR1Raw != "" {
 		opsR1, err = operations.ReadOps([]byte(opsR1Raw), param)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	if opsR2Raw != "" {
 		opsR2, err = operations.ReadOps([]byte(opsR2Raw), param)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	if opsR1Path != "" {
 		opsR1, err = operations.ReadOps(readAll(opsR1Path), param)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	if opsR2Path != "" {
 		opsR2, err = operations.ReadOps(readAll(opsR2Path), param)
-	}
-	if err != nil {
-		log.Fatal(err)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	// Apply
