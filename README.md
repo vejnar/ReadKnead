@@ -233,10 +233,10 @@ readknead -fq_fnames_r1 "sample2_R1.fastq.zst" \
 |             | add_trimmed_ref  | boolean   | false                   | Copy reference trimming sequence to read name (#-prefixed)                    |
 |             | add_separator    | boolean   | true                    | Add prefix (#) before trimmed sequence in read name                           |
 |             | algo             | string    | bktrim or bktrim_paired | Algorithms: *align*, *bktrim*, *bktrim_paired*, *search* or *match*           |
-|             | end              | integer   |                         | 5 or 3 (only for *align*, *bktrim* and *search* `algo`)                       |
+|             | end              | integer   |                         | End of read to trim : 5 or 3 (only for *align*, *bktrim* and *search* `algo`) |
 |             | min_sequence     | integer   | 0                       | Length of perfect match (starting at trimming position) in trimming alignment |
 |             | min_score        | float     | 0.8                     | Minimum alignment score (only for *align*, *search* and *match* `algo`)       |
-|             | position         | integer   |                         | Position in reads to match trimming sequence (only for *match* `algo`)        |
+|             | position         | integer   | 0                       | Position in reads to match trimming sequence (only for *match* `algo`)        |
 |             | epsilon          | float     | 0.1                     | Maximum mismatch ratio (only for *bktrim* and *bktrim_paired* `algo`)         |
 |             | epsilon_indel    | float     | 0.03                    | Maximum indel ratio (only for *bktrim* and *bktrim_paired* `algo`)            |
 |             | min_overlap      | integer   | 3                       | Minimum overlap length (only for *bktrim* and *bktrim_paired* `algo`)         |
