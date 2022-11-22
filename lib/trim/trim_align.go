@@ -56,7 +56,11 @@ func TrimAlign(r *fastq.Record, adaptors [][]byte, minAdaptor int, minScore floa
 					requiredAdaptorPart = adaptor[:minAdaptor]
 					adaptorIndexAln = bytes.Index(alignAdaptor, requiredAdaptorPart)
 				}
-				minAdaptorOk = bytes.Equal(alignSeq[adaptorIndexAln:adaptorIndexAln+minAdaptor], requiredAdaptorPart)
+				if adaptorIndexAln == -1 {
+					minAdaptorOk = false
+				} else {
+					minAdaptorOk = bytes.Equal(alignSeq[adaptorIndexAln:adaptorIndexAln+minAdaptor], requiredAdaptorPart)
+				}
 			}
 			if adaptorIndexAln != -1 && minAdaptorOk && minScore <= tmpScore && tmpScore > trimScore {
 				trimType = TrimAlignType
