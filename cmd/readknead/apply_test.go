@@ -10,7 +10,7 @@ package main
 
 import (
 	"bytes"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -23,7 +23,7 @@ func TestApplyOperations(t *testing.T) {
 	tmp := t.TempDir()
 
 	tests := [][]string{
-		[]string{
+		{
 			"sample1_R1.fastq",
 			"",
 			"sample1_R1.fastq",
@@ -31,7 +31,7 @@ func TestApplyOperations(t *testing.T) {
 			"clip_trim.json",
 			"sample1_R1.fastq.golden",
 		},
-		[]string{
+		{
 			"sample2_R1.fastq",
 			"sample2_R2.fastq",
 			"sample2_R1.fastq",
@@ -39,7 +39,7 @@ func TestApplyOperations(t *testing.T) {
 			"paired_end_trim.json",
 			"sample2_R*.fastq.golden",
 		},
-		[]string{
+		{
 			"sample2_R1.fastq",
 			"sample2_R2.fastq",
 			"sample2_[DPX]_R1.fastq",
@@ -47,7 +47,7 @@ func TestApplyOperations(t *testing.T) {
 			"demultiplex.json",
 			"sample2_*_R*.fastq.golden",
 		},
-		[]string{
+		{
 			"sample3_R1.fastq",
 			"",
 			"sample3_R1.fastq",
@@ -109,13 +109,13 @@ func TestApplyOperations(t *testing.T) {
 		}
 
 		for _, goldenPath := range goldenPaths {
-			g, err := ioutil.ReadFile(goldenPath)
+			g, err := os.ReadFile(goldenPath)
 			if err != nil {
 				t.Fatalf("failed reading .golden: %s", err)
 			}
 
 			_, filename := filepath.Split(goldenPath)
-			o, err := ioutil.ReadFile(filepath.Join(tmp, filename[:len(filename)-len(".golden")]))
+			o, err := os.ReadFile(filepath.Join(tmp, filename[:len(filename)-len(".golden")]))
 			if err != nil {
 				t.Fatalf("failed reading output: %s", err)
 			}
