@@ -50,7 +50,7 @@ func ReadOps(data []byte, param param.Parameters) ([]Operation, error) {
 			case "trim":
 				op, err = NewTrim(value, param)
 			default:
-				err = fmt.Errorf("Unknown operation: %s", opName)
+				err = fmt.Errorf("unknown operation: %s", opName)
 			}
 			if err != nil {
 				return

@@ -133,10 +133,10 @@ func NewTrim(data []byte, param param.Parameters) (*Trim, error) {
 		return &t, err
 	}
 	if !(algoRaw == "bktrim" || algoRaw == "bktrim_paired" || algoRaw == "align" || algoRaw == "search" || algoRaw == "match" || algoRaw == "trimqual") {
-		return &t, fmt.Errorf("Unknown trimming algorithm: %s", algoRaw)
+		return &t, fmt.Errorf("unknown trimming algorithm: %s", algoRaw)
 	}
 	if algoRaw != "trimqual" && len(t.sequences) == 0 {
-		return &t, fmt.Errorf("Sequence to trim not found")
+		return &t, fmt.Errorf("sequence to trim not found")
 	}
 	if algoRaw != "bktrim_paired" {
 		end, err := jsonparser.GetInt(data, "end")
@@ -177,7 +177,7 @@ func NewTrim(data []byte, param param.Parameters) (*Trim, error) {
 			t.bkMatrices = trim.NewMatrixAdapter(t.sequences, t.end, epsilon, epsilonIndel, int(minOverlap), param.AsciiMin)
 		} else if algoRaw == "bktrim_paired" {
 			if len(t.sequencesPaired) == 0 {
-				return &t, fmt.Errorf("Sequence to trim on paired read not found")
+				return &t, fmt.Errorf("sequence to trim on paired read not found")
 			}
 			t.algo = TrimBKTrimPaired
 			t.algoName = algoRaw
