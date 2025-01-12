@@ -34,7 +34,7 @@ func TrimQuality(r *fastq.Record, window int, unqualifiedPropMax float32, minQua
 				if verboseLevel > 3 {
 					qual := make([]int, window)
 					for k := range qual {
-						qual[k] = int(r.Qual[i:i+window][k]) - asciiMin
+						qual[k] = int(r.Qual[i : i+window][k]) - asciiMin
 					}
 					fmt.Printf("> %v [%s] [%s]\n> #-unqualified:%d prop:%.2f", qual, r.Qual[i:i+window], r.Seq[i:i+window], nLow, tmpScore)
 				}
@@ -67,7 +67,7 @@ func TrimQuality(r *fastq.Record, window int, unqualifiedPropMax float32, minQua
 				if verboseLevel > 3 {
 					qual := make([]int, window)
 					for k := range qual {
-						qual[k] = int(r.Qual[i-window+1:i+1][k]) - asciiMin
+						qual[k] = int(r.Qual[i-window+1 : i+1][k]) - asciiMin
 					}
 					fmt.Printf("> %v [%s] [%s]\n> #-unqualified:%d prop:%.2f", qual, r.Qual[i-window+1:i+1], r.Seq[i-window+1:i+1], nLow, tmpScore)
 				}
