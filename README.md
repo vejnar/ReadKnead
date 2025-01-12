@@ -5,7 +5,8 @@
 <p align="center" style="text-align:center;"><i>Knead your sequencing reads before baking</i></p>
 
 ReadKnead **clips**, **trims**, **demultiplexes**, **filters** (e.g. by length), **selects** (e.g. randomly) and **renames** reads from FASTQ files.
-* Choice of algorithm for trimming: fast and accurate [bit-masked k-difference matching](https://git.sr.ht/~vejnar/bktrim), Needleman–Wunsch, search or match.
+* Choice of algorithm for adapter trimming: fast and accurate [bit-masked k-difference matching](https://git.sr.ht/~vejnar/bktrim), Needleman–Wunsch, search or match.
+* Quality filtering and trimming
 * Demultiplexing using internal barcodes (user-defined positions in the reads)
 
 For testing read preparation pipelines and quality control, ReadKnead:
@@ -206,40 +207,43 @@ readknead -fq_fnames_r1 "sample2_R1.fastq.zst" \
 
 ## Operations
 
-| Operation   | Parameter        | Type      | Default                 |                                                                               |
-|-------------|------------------|-----------|-------------------------|-------------------------------------------------------------------------------|
-| clip        | length           | integer   |                         | Number of nucleotide to clip                                                  |
-|             | end              | integer   |                         | End of read to clip: 5 or 3                                                   |
-|             | add_clipped      | boolean   | false                   | Copy clipped nucleotide to read name (#-prefixed)                             |
-|             | add_separator    | boolean   | true                    | Add prefix (#) before clipped sequence in read name                           |
-| demultiplex | barcodes         | []strings |                         | List of barcode sequences                                                     |
-|             | end              | integer   |                         | End of read to clip: 5 or 3                                                   |
-|             | barcode_idx      | integer   |                         | Index (first: 0) of #-prefixed sequence (barcode or UMI) in read name         |
-|             | max_mismatch     | integer   | 0                       | Maximum number of mismatch between read and barcode                           |
-|             | length_ligand    | integer   | 0                       | Clip if barcode found                                                         |
-| length      | min_length       | integer   | -1                      | Minimum read length                                                           |
-|             | max_length       | integer   | -1                      | Maximum read length                                                           |
-| random      | probability      | float     | 1.                      | Probability to keep read (between 0 and 1)                                    |
-| rename      | new_name         | string    |                         | New read name                                                                 |
-|             | base36           | boolean   | false                   | Convert read number to shorter base36                                         |
-|             | keep_barcode     | boolean   | false                   | Keep #-prefixed sequences                                                     |
-|             | merge_barcode    | boolean   | false                   | Merge #-prefixed sequences to one                                             |
-|             | all_reads        | boolean   | true                    | Rename all reads                                                              |
-| trim        | sequence         | string    |                         | Sequence to trim (for pair-end reads: downstream sequence)                    |
-|             | sequences        | []strings |                         | Use for multiple-sequence trimming                                            |
-|             | sequence_paired  | string    |                         | Upstream sequence to trim for paired-end reads                                |
-|             | sequences_paired | []strings |                         | Use for multiple-sequence paired-end reads trimming                           |
-|             | add_trimmed      | boolean   | false                   | Copy trimmed nucleotide to read name (#-prefixed)                             |
-|             | add_trimmed_ref  | boolean   | false                   | Copy reference trimming sequence to read name (#-prefixed)                    |
-|             | add_separator    | boolean   | true                    | Add prefix (#) before trimmed sequence in read name                           |
-|             | algo             | string    | bktrim or bktrim_paired | Algorithms: *align*, *bktrim*, *bktrim_paired*, *search* or *match*           |
-|             | end              | integer   |                         | End of read to trim : 5 or 3 (only for *align*, *bktrim* and *search* `algo`) |
-|             | min_sequence     | integer   | 0                       | Length of perfect match (starting at trimming position) in trimming alignment |
-|             | min_score        | float     | 0.8                     | Minimum alignment score (only for *align*, *search* and *match* `algo`)       |
-|             | position         | integer   | 0                       | Position in reads to match trimming sequence (only for *match* `algo`)        |
-|             | epsilon          | float     | 0.1                     | Maximum mismatch ratio (only for *bktrim* and *bktrim_paired* `algo`)         |
-|             | epsilon_indel    | float     | 0.03                    | Maximum indel ratio (only for *bktrim* and *bktrim_paired* `algo`)            |
-|             | min_overlap      | integer   | 3                       | Minimum overlap length (only for *bktrim* and *bktrim_paired* `algo`)         |
+| Operation   | Parameter            | Type      | Default                 |                                                                                           |
+|-------------|----------------------|-----------|-------------------------|-------------------------------------------------------------------------------------------|
+| clip        | length               | integer   |                         | Number of nucleotide to clip                                                              |
+|             | end                  | integer   |                         | End of read to clip: 5 or 3                                                               |
+|             | add_clipped          | boolean   | false                   | Copy clipped nucleotide to read name (#-prefixed)                                         |
+|             | add_separator        | boolean   | true                    | Add prefix (#) before clipped sequence in read name                                       |
+| demultiplex | barcodes             | []strings |                         | List of barcode sequences                                                                 |
+|             | end                  | integer   |                         | End of read to clip: 5 or 3                                                               |
+|             | barcode_idx          | integer   |                         | Index (first: 0) of #-prefixed sequence (barcode or UMI) in read name                     |
+|             | max_mismatch         | integer   | 0                       | Maximum number of mismatch between read and barcode                                       |
+|             | length_ligand        | integer   | 0                       | Clip if barcode found                                                                     |
+| length      | min_length           | integer   | -1                      | Minimum read length                                                                       |
+|             | max_length           | integer   | -1                      | Maximum read length                                                                       |
+| random      | probability          | float     | 1.                      | Probability to keep read (between 0 and 1)                                                |
+| rename      | new_name             | string    |                         | New read name                                                                             |
+|             | base36               | boolean   | false                   | Convert read number to shorter base36                                                     |
+|             | keep_barcode         | boolean   | false                   | Keep #-prefixed sequences                                                                 |
+|             | merge_barcode        | boolean   | false                   | Merge #-prefixed sequences to one                                                         |
+|             | all_reads            | boolean   | true                    | Rename all reads                                                                          |
+| trim        | sequence             | string    |                         | Sequence to trim (for pair-end reads: downstream sequence)                                |
+|             | sequences            | []strings |                         | Use for multiple-sequence trimming                                                        |
+|             | sequence_paired      | string    |                         | Upstream sequence to trim for paired-end reads                                            |
+|             | sequences_paired     | []strings |                         | Use for multiple-sequence paired-end reads trimming                                       |
+|             | add_trimmed          | boolean   | false                   | Copy trimmed nucleotide to read name (#-prefixed)                                         |
+|             | add_trimmed_ref      | boolean   | false                   | Copy reference trimming sequence to read name (#-prefixed)                                |
+|             | add_separator        | boolean   | true                    | Add prefix (#) before trimmed sequence in read name                                       |
+|             | algo                 | string    | bktrim or bktrim_paired | Algorithms: *align*, *bktrim*, *bktrim_paired*, *search*, *match* or *trimqual*           |
+|             | end                  | integer   |                         | End of read to trim : 5 or 3 (only for *align*, *bktrim*, *search* and *trimqual* `algo`) |
+|             | min_sequence         | integer   | 0                       | Length of perfect match (starting at trimming position) in trimming alignment             |
+|             | min_score            | float     | 0.8                     | Minimum alignment score (only for *align*, *search* and *match* `algo`)                   |
+|             | position             | integer   | 0                       | Position in reads to match trimming sequence (only for *match* `algo`)                    |
+|             | epsilon              | float     | 0.1                     | Maximum mismatch ratio (only for *bktrim* and *bktrim_paired* `algo`)                     |
+|             | epsilon_indel        | float     | 0.03                    | Maximum indel ratio (only for *bktrim* and *bktrim_paired* `algo`)                        |
+|             | min_overlap          | integer   | 3                       | Minimum overlap length (only for *bktrim* and *bktrim_paired* `algo`)                     |
+|             | window               | integer   | 5                       | Length of sliding window for quality trimming (only for *trimqual* `algo`)                |
+|             | unqualified_prop_max | float     | 0.6                     | Maximum proportion of unqualified bases (only for *trimqual* `algo`)                      |
+|             | min_quality          | integer   | 15                      | Minimum Phred quality score of qualified bases (only for *trimqual* `algo`)               |
 
 ## License
 

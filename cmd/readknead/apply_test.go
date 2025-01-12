@@ -47,6 +47,14 @@ func TestApplyOperations(t *testing.T) {
 			"demultiplex.json",
 			"sample2_*_R*.fastq.golden",
 		},
+		[]string{
+			"sample3_R1.fastq",
+			"",
+			"sample3_R1.fastq",
+			"",
+			"trimqual.json",
+			"sample3_R1.fastq.golden",
+		},
 	}
 
 	for _, test := range tests {

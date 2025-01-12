@@ -26,6 +26,7 @@ const (
 	TrimBKTrimPaired
 	TrimSearch
 	TrimMatch
+	TrimQuality
 )
 
 type Trim struct {
@@ -47,10 +48,14 @@ type Trim struct {
 	addLigandSeparator bool
 	applyTrimSeq       bool
 	bkMatrices         []*bktrim.Matrix
+	window             int
+	unqualifiedPropMax float32
+	minQuality         int
+	param              param.Parameters
 }
 
 func NewTrim(data []byte, param param.Parameters) (*Trim, error) {
-	t := Trim{name: "trim"}
+	t := Trim{name: "trim", param: param}
 	sequence, err := jsonparser.GetUnsafeString(data, "sequence")
 	if err != nil && err != jsonparser.KeyPathNotFoundError {
 		return &t, err
@@ -71,9 +76,6 @@ func NewTrim(data []byte, param param.Parameters) (*Trim, error) {
 	}, "sequences")
 	if err != nil {
 		return &t, err
-	}
-	if len(t.sequences) == 0 {
-		return &t, fmt.Errorf("Sequence to trim not found")
 	}
 	sequencePaired, err := jsonparser.GetUnsafeString(data, "sequence_paired")
 	if err != nil && err != jsonparser.KeyPathNotFoundError {
@@ -130,8 +132,11 @@ func NewTrim(data []byte, param param.Parameters) (*Trim, error) {
 	} else if err != nil {
 		return &t, err
 	}
-	if !(algoRaw == "bktrim" || algoRaw == "bktrim_paired" || algoRaw == "align" || algoRaw == "search" || algoRaw == "match") {
+	if !(algoRaw == "bktrim" || algoRaw == "bktrim_paired" || algoRaw == "align" || algoRaw == "search" || algoRaw == "match" || algoRaw == "trimqual") {
 		return &t, fmt.Errorf("Unknown trimming algorithm: %s", algoRaw)
+	}
+	if algoRaw != "trimqual" && len(t.sequences) == 0 {
+		return &t, fmt.Errorf("Sequence to trim not found")
 	}
 	if algoRaw != "bktrim_paired" {
 		end, err := jsonparser.GetInt(data, "end")
@@ -183,6 +188,9 @@ func NewTrim(data []byte, param param.Parameters) (*Trim, error) {
 		t.algoName = algoRaw
 	} else if algoRaw == "match" {
 		t.algo = TrimMatch
+		t.algoName = algoRaw
+	} else if algoRaw == "trimqual" {
+		t.algo = TrimQuality
 		t.algoName = algoRaw
 	}
 	minSequence, err := jsonparser.GetInt(data, "min_sequence")
@@ -269,6 +277,30 @@ func NewTrim(data []byte, param param.Parameters) (*Trim, error) {
 	} else {
 		t.applyTrimSeq = applyTrimSeq
 	}
+	window, err := jsonparser.GetInt(data, "window")
+	if err == jsonparser.KeyPathNotFoundError {
+		t.window = 5
+	} else if err != nil {
+		return &t, err
+	} else {
+		t.window = int(window)
+	}
+	unqualifiedPropMax, err := jsonparser.GetFloat(data, "unqualified_prop_max")
+	if err == jsonparser.KeyPathNotFoundError {
+		t.unqualifiedPropMax = 0.6
+	} else if err != nil {
+		return &t, err
+	} else {
+		t.unqualifiedPropMax = float32(unqualifiedPropMax)
+	}
+	minQuality, err := jsonparser.GetInt(data, "min_quality")
+	if err == jsonparser.KeyPathNotFoundError {
+		t.minQuality = 15
+	} else if err != nil {
+		return &t, err
+	} else {
+		t.minQuality = int(minQuality)
+	}
 	return &t, nil
 }
 
@@ -304,6 +336,8 @@ func (op *Trim) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel int)
 			trimType, trimIdx, trimScore, trimSeq = trim.TrimSearch(&p.R1, op.sequences, op.minSequence, op.minScore, op.end, op.applyTrimSeq, verboseLevel)
 		case TrimMatch:
 			trimType, trimIdx, trimScore, trimSeq = trim.TrimMatch(&p.R1, op.sequences, op.position, op.minSequence, op.minScore, op.end, op.applyTrimSeq, verboseLevel)
+		case TrimQuality:
+			trimType, trimIdx, trimScore, trimSeq = trim.TrimQuality(&p.R1, op.window, op.unqualifiedPropMax, op.minQuality, op.param.AsciiMin, op.end, op.applyTrimSeq, verboseLevel)
 		}
 		if verboseLevel > 2 {
 			fmt.Printf("%s %s length:%d score:%.2f\n", p.R1.Seq, trimType, len(p.R1.Seq), trimScore)
@@ -353,6 +387,8 @@ func (op *Trim) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel int)
 			trimType, trimIdx, trimScore, trimSeq = trim.TrimSearch(&p.R2, op.sequences, op.minSequence, op.minScore, op.end, op.applyTrimSeq, verboseLevel)
 		case TrimMatch:
 			trimType, trimIdx, trimScore, trimSeq = trim.TrimMatch(&p.R2, op.sequences, op.position, op.minSequence, op.minScore, op.end, op.applyTrimSeq, verboseLevel)
+		case TrimQuality:
+			trimType, trimIdx, trimScore, trimSeq = trim.TrimQuality(&p.R2, op.window, op.unqualifiedPropMax, op.minQuality, op.param.AsciiMin, op.end, op.applyTrimSeq, verboseLevel)
 		}
 		if verboseLevel > 2 {
 			fmt.Printf("%s %s length:%d score:%.2f\n", p.R2.Seq, trimType, len(p.R2.Seq), trimScore)

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "trim",
+    "end": 5,
+    "algo": "trimqual",
+    "window": 5,
+    "min_quality": 15,
+    "unqualified_prop_max": 0.6
+  },
+  {
+    "name": "trim",
+    "end": 3,
+    "algo": "trimqual",
+    "window": 5,
+    "min_quality": 15,
+    "unqualified_prop_max": 0.6
+  },
+  {
+    "name": "length",
+    "min_length": 20
+  }
+]
