@@ -238,7 +238,7 @@ func NewTrim(data []byte, param param.Parameters) (*Trim, error) {
 		}
 	}, "keep")
 	if !found {
-		for i, _ := range t.keep {
+		for i := range t.keep {
 			t.keep[i] = true
 		}
 	}

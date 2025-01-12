@@ -82,7 +82,7 @@ func writeQL(statsPath string, pairName string, quals [][]uint64, lengths map[in
 }
 
 func minMaxKeys(m map[int]uint64) (min, max int) {
-	for k, _ := range m {
+	for k := range m {
 		if k < min {
 			min = k
 		}
@@ -197,12 +197,12 @@ func (ot *OpStat) Update(otn *OpStat) {
 		}
 	}
 	// Operations stats
-	for op, _ := range otn.OpsR1 {
+	for op := range otn.OpsR1 {
 		for name, v := range otn.OpsR1[op] {
 			ot.OpsR1[op][name] += v
 		}
 	}
-	for op, _ := range otn.OpsR2 {
+	for op := range otn.OpsR2 {
 		for name, v := range otn.OpsR2[op] {
 			ot.OpsR2[op][name] += v
 		}
