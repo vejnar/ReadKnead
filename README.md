@@ -245,4 +245,4 @@ readknead -fq_fnames_r1 "sample2_R1.fastq.zst" \
 
 *ReadKnead* is distributed under the Mozilla Public License Version 2.0 (see /LICENSE).
 
-Copyright © 2017-2023 Charles E. Vejnar
+Copyright © 2017-2025 Charles E. Vejnar
