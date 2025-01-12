@@ -426,5 +426,4 @@ func (op *Trim) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel int)
 			return 1
 		}
 	}
-	return 0
 }
