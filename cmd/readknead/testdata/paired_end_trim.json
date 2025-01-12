@@ -1,15 +1,25 @@
-[{"name": "rename",
-  "base36": true,
-  "keep_barcode": true,
-  "new_name": "sample2."},
- {"name": "trim",
-  "algo": "bktrim_paired",
-  "epsilon": 0.15,
-  "epsilon_indel": 0.1,
-  "keep": ["no_trim",
-           "trim_exact",
-           "trim_align"],
-  "sequence":"AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
-  "sequence_paired":"AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTA"},
- {"name": "length",
-  "min_length": 20}]
+[
+  {
+    "name": "rename",
+    "base36": true,
+    "keep_barcode": true,
+    "new_name": "sample2."
+  },
+  {
+    "name": "trim",
+    "algo": "bktrim_paired",
+    "epsilon": 0.15,
+    "epsilon_indel": 0.1,
+    "keep": [
+      "no_trim",
+      "trim_exact",
+      "trim_align"
+    ],
+    "sequence": "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
+    "sequence_paired": "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTA"
+  },
+  {
+    "name": "length",
+    "min_length": 20
+  }
+]
