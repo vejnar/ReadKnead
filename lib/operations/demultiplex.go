@@ -222,7 +222,7 @@ func GetBarcodes(name []byte) [][]byte {
 	var bc []byte
 	lastCut := len(name)
 	for i := len(name) - 1; i >= 0; i-- {
-		if bio.IsDNA(name[i]) == false && name[i] != '#' {
+		if !bio.IsDNA(name[i]) && name[i] != '#' {
 			break
 		}
 		if name[i] == '#' {

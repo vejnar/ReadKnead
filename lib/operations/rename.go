@@ -120,7 +120,7 @@ func (op *Rename) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel in
 func getBarcode(name []byte) []byte {
 	cutStart := len(name) - 1
 	for i := cutStart; i >= 0; i-- {
-		if bio.IsDNA(name[i]) == false && name[i] != '#' {
+		if !bio.IsDNA(name[i]) && name[i] != '#' {
 			break
 		}
 		if name[i] == '#' {
