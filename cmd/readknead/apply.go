@@ -35,7 +35,7 @@ func ApplyOperations(fastqsR1 []string, fastqsR2 []string, fqPathOut string, fqF
 		}
 	}
 	if nNotThreadSafe > 1 {
-		return nPair, fmt.Errorf("Too many non thread-safe operation (maximum 1)")
+		return nPair, fmt.Errorf("too many non thread-safe operation (maximum 1)")
 	}
 
 	// Demultiplex name(s)
@@ -316,8 +316,7 @@ func ApplyOperations(fastqsR1 []string, fastqsR2 []string, fqPathOut string, fqF
 	}
 
 	// Write FASTQ
-	var id uint64
-	id = 1
+	var id uint64 = 1
 	for p := range chFinal {
 		// Output
 		if writeFq && p.Ok {
