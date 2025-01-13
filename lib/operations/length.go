@@ -65,10 +65,7 @@ func (op *Length) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel in
 			}
 			ot.OpsR1[op.name]["too_short"]++
 			return 1
-		} else {
-			return 0
-		}
-		if op.maxLength != -1 && len(p.R1.Seq) > op.maxLength {
+		} else if op.maxLength != -1 && len(p.R1.Seq) > op.maxLength {
 			if verboseLevel > 2 {
 				fmt.Printf("length r1 too_long %d\n", len(p.R1.Seq))
 			}
@@ -84,10 +81,7 @@ func (op *Length) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel in
 			}
 			ot.OpsR2[op.name]["too_short"]++
 			return 1
-		} else {
-			return 0
-		}
-		if op.maxLength != -1 && len(p.R2.Seq) > op.maxLength {
+		} else if op.maxLength != -1 && len(p.R2.Seq) > op.maxLength {
 			if verboseLevel > 2 {
 				fmt.Printf("length r2 too_long %d\n", len(p.R2.Seq))
 			}
@@ -97,5 +91,4 @@ func (op *Length) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel in
 			return 0
 		}
 	}
-	return 0
 }

@@ -1,0 +1,23 @@
+[
+  {
+    "name": "trim",
+    "end": 3,
+    "algo": "bktrim",
+    "epsilon": 0.15,
+    "epsilon_indel": 0.1,
+    "keep": [
+      "no_trim",
+      "trim_exact",
+      "trim_align"
+    ],
+    "sequence": "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC"
+  },
+  {
+    "name": "length",
+    "min_length": 40
+  },
+  {
+    "name": "length",
+    "max_length": 60
+  }
+]

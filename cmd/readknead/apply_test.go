@@ -55,6 +55,14 @@ func TestApplyOperations(t *testing.T) {
 			"trimqual.json",
 			"sample3_R1.fastq.golden",
 		},
+		{
+			"sample4_R1.fastq",
+			"",
+			"sample4_R1.fastq",
+			"",
+			"trim_length.json",
+			"sample4_R1.fastq.golden",
+		},
 	}
 
 	for _, test := range tests {
