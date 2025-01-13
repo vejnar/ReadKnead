@@ -23,7 +23,7 @@ func BarplotLength(lengths map[int]uint64, path string, title string) error {
 	plot.DefaultFont = font.Font{Typeface: "Liberation", Variant: "Sans"}
 	// Max read length
 	maxLength := 0
-	for l, _ := range lengths {
+	for l := range lengths {
 		if l > maxLength {
 			maxLength = l
 		}
