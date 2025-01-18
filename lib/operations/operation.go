@@ -43,6 +43,8 @@ func ReadOps(data []byte, param param.Parameters) ([]Operation, error) {
 				op, err = NewDemultiplex(value)
 			case "length":
 				op, err = NewLength(value)
+			case "quality":
+				op, err = NewQuality(value, param)
 			case "random":
 				op, err = NewRandom(value)
 			case "rename":

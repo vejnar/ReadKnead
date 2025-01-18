@@ -1,0 +1,7 @@
+[
+  {
+    "name": "quality",
+    "function": "average",
+    "min_quality": 37.0
+  }
+]
