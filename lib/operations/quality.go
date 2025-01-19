@@ -40,7 +40,7 @@ func NewQuality(data []byte, param param.Parameters) (*Quality, error) {
 	// minQuality
 	minQuality, err := jsonparser.GetFloat(data, "min_quality")
 	if err == jsonparser.KeyPathNotFoundError {
-		q.minQuality = -1
+		q.minQuality = 15.0
 	} else if err != nil {
 		return &q, err
 	} else {
