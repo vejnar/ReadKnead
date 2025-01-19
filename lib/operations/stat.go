@@ -115,11 +115,11 @@ func NewOpStat(statsInPath string, statsOutPath string, reportPath string, label
 	// Init. operations stats
 	ot.OpsR1 = make(map[string]map[string]uint64)
 	for _, op := range opsR1 {
-		ot.OpsR1[op.Name()] = make(map[string]uint64)
+		ot.OpsR1[op.Label()] = make(map[string]uint64)
 	}
 	ot.OpsR2 = make(map[string]map[string]uint64)
 	for _, op := range opsR2 {
-		ot.OpsR2[op.Name()] = make(map[string]uint64)
+		ot.OpsR2[op.Label()] = make(map[string]uint64)
 	}
 	return &ot
 }

@@ -21,6 +21,7 @@ type Demultiplex struct {
 	Barcodes     [][]byte
 	BarcodesID   []int
 	name         string
+	label        string
 	end          int
 	barcodeIdx   int
 	lengthLigand int
@@ -31,6 +32,7 @@ type Demultiplex struct {
 func NewDemultiplex(data []byte) (*Demultiplex, error) {
 	d := Demultiplex{name: "demultiplex"}
 	var err error
+	// barcodes
 	jsonparser.ArrayEach(data, func(value []byte, dataType jsonparser.ValueType, offset int, err2 error) {
 		if err == nil {
 			var b string
@@ -43,6 +45,16 @@ func NewDemultiplex(data []byte) (*Demultiplex, error) {
 	}, "barcodes")
 	if err != nil {
 		return &d, err
+	}
+	// label
+	label, err := jsonparser.GetUnsafeString(data, "label")
+	if err != nil && err != jsonparser.KeyPathNotFoundError {
+		return &d, err
+	}
+	if label == "" {
+		d.label = d.name
+	} else {
+		d.label = label
 	}
 	end, err := jsonparser.GetInt(data, "end")
 	if err == jsonparser.KeyPathNotFoundError {
@@ -85,6 +97,10 @@ func (op *Demultiplex) Name() string {
 	return op.name
 }
 
+func (op *Demultiplex) Label() string {
+	return op.label
+}
+
 func (op *Demultiplex) IsThreadSafe() bool {
 	return true
 }
@@ -109,7 +125,7 @@ func (op *Demultiplex) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLev
 	bestBarcode := -1
 	if r == 1 {
 		if verboseLevel > 2 {
-			fmt.Printf("%s %s r%d\n%s\n", op.name, p.R1.Name, r, p.R1.Seq)
+			fmt.Printf("%s %s %s r%d\n%s\n", op.name, op.label, p.R1.Name, r, p.R1.Seq)
 		}
 		for ibc, bc := range op.Barcodes {
 			okSeq = false
@@ -152,7 +168,7 @@ func (op *Demultiplex) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLev
 		}
 	} else {
 		if verboseLevel > 2 {
-			fmt.Printf("%s %s r%d\n%s\n", op.name, p.R2.Name, r, p.R2.Seq)
+			fmt.Printf("%s %s %s r%d\n%s\n", op.name, op.label, p.R2.Name, r, p.R2.Seq)
 		}
 		for ibc, bc := range op.Barcodes {
 			okSeq = false
@@ -198,7 +214,7 @@ func (op *Demultiplex) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLev
 	if bestBarcode != -1 {
 		p.WID = bestBarcode
 		// Clip barcode and ligand
-		pc := Clip{name: op.name + "-clip", end: op.end, length: len(bestBarcodeSeq) + op.lengthLigand}
+		pc := Clip{name: op.name, label: op.label + "-clip", end: op.end, length: len(bestBarcodeSeq) + op.lengthLigand}
 		pc.Transform(p, r, ot, verboseLevel)
 		if verboseLevel > 2 {
 			fmt.Printf("barcode found:%s\n", string(bestBarcodeSeq))
@@ -210,9 +226,9 @@ func (op *Demultiplex) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLev
 	}
 	// Stats
 	if r == 1 {
-		ot.OpsR1[op.name][string(bestBarcodeSeq)]++
+		ot.OpsR1[op.label][string(bestBarcodeSeq)]++
 	} else {
-		ot.OpsR2[op.name][string(bestBarcodeSeq)]++
+		ot.OpsR2[op.label][string(bestBarcodeSeq)]++
 	}
 	return 0
 }

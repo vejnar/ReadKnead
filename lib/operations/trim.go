@@ -31,6 +31,7 @@ const (
 
 type Trim struct {
 	name               string
+	label              string
 	end                int
 	sequences          [][]byte
 	sequencesPaired    [][]byte
@@ -56,6 +57,15 @@ type Trim struct {
 
 func NewTrim(data []byte, param param.Parameters) (*Trim, error) {
 	t := Trim{name: "trim", param: param}
+	label, err := jsonparser.GetUnsafeString(data, "label")
+	if err != nil && err != jsonparser.KeyPathNotFoundError {
+		return &t, err
+	}
+	if label == "" {
+		t.label = t.name
+	} else {
+		t.label = label
+	}
 	sequence, err := jsonparser.GetUnsafeString(data, "sequence")
 	if err != nil && err != jsonparser.KeyPathNotFoundError {
 		return &t, err
@@ -308,6 +318,10 @@ func (op *Trim) Name() string {
 	return op.name
 }
 
+func (op *Trim) Label() string {
+	return op.label
+}
+
 func (op *Trim) IsThreadSafe() bool {
 	return true
 }
@@ -323,7 +337,7 @@ func (op *Trim) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel int)
 	var trimSeq []byte
 	if r == 1 {
 		if verboseLevel > 2 {
-			fmt.Printf("%s %s %s r%d\n%s\n", op.name, op.algoName, p.R1.Name, r, p.R1.Seq)
+			fmt.Printf("%s %s %s %s r%d\n%s\n", op.name, op.label, op.algoName, p.R1.Name, r, p.R1.Seq)
 		}
 		switch op.algo {
 		case TrimAlignNW:
@@ -342,7 +356,7 @@ func (op *Trim) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel int)
 		if verboseLevel > 2 {
 			fmt.Printf("%s %s length:%d score:%.2f\n", p.R1.Seq, trimType, len(p.R1.Seq), trimScore)
 		}
-		ot.OpsR1[op.name][trimType.String()]++
+		ot.OpsR1[op.label][trimType.String()]++
 		if op.keep[trimType] {
 			// Add trimmed sequence
 			if len(trimSeq) > 0 {
@@ -367,7 +381,7 @@ func (op *Trim) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel int)
 			}
 			// Ligand
 			if trimType != trim.NoTrimType && op.lengthLigand > 0 {
-				pc := Clip{name: op.name, end: op.end, length: op.lengthLigand, addClipped: op.addLigand, addSeparator: op.addLigandSeparator}
+				pc := Clip{name: op.name, label: op.label + "-clip", end: op.end, length: op.lengthLigand, addClipped: op.addLigand, addSeparator: op.addLigandSeparator}
 				return pc.Transform(p, 1, ot, verboseLevel)
 			}
 			return 0
@@ -376,7 +390,7 @@ func (op *Trim) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel int)
 		}
 	} else {
 		if verboseLevel > 2 {
-			fmt.Printf("%s %d %s r%d\n%s\n", op.name, op.algo, p.R2.Name, r, p.R2.Seq)
+			fmt.Printf("%s %s %d %s r%d\n%s\n", op.name, op.label, op.algo, p.R2.Name, r, p.R2.Seq)
 		}
 		switch op.algo {
 		case TrimAlignNW:
@@ -393,7 +407,7 @@ func (op *Trim) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel int)
 		if verboseLevel > 2 {
 			fmt.Printf("%s %s length:%d score:%.2f\n", p.R2.Seq, trimType, len(p.R2.Seq), trimScore)
 		}
-		ot.OpsR2[op.name][trimType.String()]++
+		ot.OpsR2[op.label][trimType.String()]++
 		if op.keep[trimType] {
 			// Add trimmed sequence
 			if len(trimSeq) > 0 {
@@ -418,7 +432,7 @@ func (op *Trim) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel int)
 			}
 			// Ligand
 			if trimType != trim.NoTrimType && op.lengthLigand > 0 {
-				pc := Clip{name: op.name, end: op.end, length: op.lengthLigand, addClipped: op.addLigand, addSeparator: op.addLigandSeparator}
+				pc := Clip{name: op.name, label: op.label + "-clip", end: op.end, length: op.lengthLigand, addClipped: op.addLigand, addSeparator: op.addLigandSeparator}
 				return pc.Transform(p, 2, ot, verboseLevel)
 			}
 			return 0

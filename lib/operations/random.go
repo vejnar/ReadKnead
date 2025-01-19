@@ -18,11 +18,22 @@ import (
 
 type Random struct {
 	name        string
+	label       string
 	probability float32
 }
 
 func NewRandom(data []byte) (*Random, error) {
 	r := Random{name: "random"}
+	// label
+	label, err := jsonparser.GetUnsafeString(data, "label")
+	if err != nil && err != jsonparser.KeyPathNotFoundError {
+		return &r, err
+	}
+	if label == "" {
+		r.label = r.name
+	} else {
+		r.label = label
+	}
 	probability, err := jsonparser.GetFloat(data, "probability")
 	if err == jsonparser.KeyPathNotFoundError {
 		r.probability = 1.
@@ -36,6 +47,10 @@ func NewRandom(data []byte) (*Random, error) {
 
 func (op *Random) Name() string {
 	return op.name
+}
+
+func (op *Random) Label() string {
+	return op.label
 }
 
 func (op *Random) IsThreadSafe() bool {

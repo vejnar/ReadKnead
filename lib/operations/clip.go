@@ -19,6 +19,7 @@ import (
 
 type Clip struct {
 	name         string
+	label        string
 	end          int
 	length       int
 	addClipped   bool
@@ -27,6 +28,15 @@ type Clip struct {
 
 func NewClip(data []byte) (*Clip, error) {
 	c := Clip{name: "clip"}
+	label, err := jsonparser.GetUnsafeString(data, "label")
+	if err != nil && err != jsonparser.KeyPathNotFoundError {
+		return &c, err
+	}
+	if label == "" {
+		c.label = c.name
+	} else {
+		c.label = label
+	}
 	end, err := jsonparser.GetInt(data, "end")
 	if err != nil {
 		if errors.Is(err, jsonparser.KeyPathNotFoundError) {
@@ -68,6 +78,10 @@ func (op *Clip) Name() string {
 	return op.name
 }
 
+func (op *Clip) Label() string {
+	return op.label
+}
+
 func (op *Clip) IsThreadSafe() bool {
 	return true
 }
@@ -80,10 +94,10 @@ func (op *Clip) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel int)
 	if op.end == 5 {
 		if r == 1 {
 			if verboseLevel > 2 {
-				fmt.Printf("%s %s r%d\n%s\n", op.name, p.R1.Name, r, p.R1.Seq)
+				fmt.Printf("%s %s %s r%d\n%s\n", op.name, op.label, p.R1.Name, r, p.R1.Seq)
 			}
 			if len(p.R1.Seq) < op.length {
-				ot.OpsR1[op.name]["too_short"]++
+				ot.OpsR1[op.label]["too_short"]++
 				return 1
 			} else {
 				if op.addClipped {
@@ -103,10 +117,10 @@ func (op *Clip) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel int)
 			}
 		} else {
 			if verboseLevel > 2 {
-				fmt.Printf("%s %s r%d\n%s\n", op.name, p.R2.Name, r, p.R2.Seq)
+				fmt.Printf("%s %s %s r%d\n%s\n", op.name, op.label, p.R2.Name, r, p.R2.Seq)
 			}
 			if len(p.R2.Seq) < op.length {
-				ot.OpsR2[op.name]["too_short"]++
+				ot.OpsR2[op.label]["too_short"]++
 				return 1
 			} else {
 				if op.addClipped {
@@ -128,11 +142,11 @@ func (op *Clip) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel int)
 	} else if op.end == 3 {
 		if r == 1 {
 			if verboseLevel > 2 {
-				fmt.Printf("%s %s r%d\n%s\n", op.name, p.R1.Name, r, p.R1.Seq)
+				fmt.Printf("%s %s %s r%d\n%s\n", op.name, op.label, p.R1.Name, r, p.R1.Seq)
 			}
 			clipIndex := len(p.R1.Seq) - op.length
 			if clipIndex < 0 {
-				ot.OpsR1[op.name]["too_short"]++
+				ot.OpsR1[op.label]["too_short"]++
 				return 1
 			} else {
 				if op.addClipped {
@@ -152,11 +166,11 @@ func (op *Clip) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel int)
 			}
 		} else {
 			if verboseLevel > 2 {
-				fmt.Printf("%s %s r%d\n%s\n", op.name, p.R2.Name, r, p.R2.Seq)
+				fmt.Printf("%s %s %s r%d\n%s\n", op.name, op.label, p.R2.Name, r, p.R2.Seq)
 			}
 			clipIndex := len(p.R2.Seq) - op.length
 			if clipIndex < 0 {
-				ot.OpsR2[op.name]["too_short"]++
+				ot.OpsR2[op.label]["too_short"]++
 				return 1
 			} else {
 				if op.addClipped {

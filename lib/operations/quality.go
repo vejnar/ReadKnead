@@ -19,6 +19,7 @@ import (
 
 type Quality struct {
 	name       string
+	label      string
 	minQuality float32
 	function   string
 	param      param.Parameters
@@ -26,6 +27,16 @@ type Quality struct {
 
 func NewQuality(data []byte, param param.Parameters) (*Quality, error) {
 	q := Quality{name: "quality", param: param}
+	// label
+	label, err := jsonparser.GetUnsafeString(data, "label")
+	if err != nil && err != jsonparser.KeyPathNotFoundError {
+		return &q, err
+	}
+	if label == "" {
+		q.label = q.name
+	} else {
+		q.label = label
+	}
 	// minQuality
 	minQuality, err := jsonparser.GetFloat(data, "min_quality")
 	if err == jsonparser.KeyPathNotFoundError {
@@ -52,6 +63,10 @@ func NewQuality(data []byte, param param.Parameters) (*Quality, error) {
 
 func (op *Quality) Name() string {
 	return op.name
+}
+
+func (op *Quality) Label() string {
+	return op.label
 }
 
 func (op *Quality) IsThreadSafe() bool {
@@ -82,6 +97,11 @@ func (op *Quality) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel i
 			fmt.Printf("> avg:%.2f discard:%t\n", avgQual, avgQual < op.minQuality)
 		}
 		if avgQual < op.minQuality {
+			if r == 1 {
+				ot.OpsR1[op.label]["low_quality"]++
+			} else {
+				ot.OpsR2[op.label]["low_quality"]++
+			}
 			return 1
 		} else {
 			return 0

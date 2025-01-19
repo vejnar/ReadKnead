@@ -1,6 +1,7 @@
 [
   {
     "name": "trim",
+    "label": "trim_5",
     "end": 5,
     "algo": "trimqual",
     "window": 5,
@@ -9,6 +10,7 @@
   },
   {
     "name": "trim",
+    "label": "trim_3",
     "end": 3,
     "algo": "trimqual",
     "window": 5,

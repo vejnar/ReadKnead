@@ -19,6 +19,7 @@ import (
 
 type Operation interface {
 	Name() string
+	Label() string
 	IsThreadSafe() bool
 	GetDpx(int) ([][]byte, int)
 	Transform(*fastq.ExtPair, int, *OpStat, int) int

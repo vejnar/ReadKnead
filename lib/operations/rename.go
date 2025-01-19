@@ -21,6 +21,7 @@ import (
 
 type Rename struct {
 	name         string
+	label        string
 	newName      []byte
 	base36       bool
 	keepBarcode  bool
@@ -30,6 +31,16 @@ type Rename struct {
 
 func NewRename(data []byte) (*Rename, error) {
 	r := Rename{name: "rename"}
+	// label
+	label, err := jsonparser.GetUnsafeString(data, "label")
+	if err != nil && err != jsonparser.KeyPathNotFoundError {
+		return &r, err
+	}
+	if label == "" {
+		r.label = r.name
+	} else {
+		r.label = label
+	}
 	newName, err := jsonparser.GetUnsafeString(data, "new_name")
 	if err != nil {
 		if errors.Is(err, jsonparser.KeyPathNotFoundError) {
@@ -76,6 +87,10 @@ func NewRename(data []byte) (*Rename, error) {
 
 func (op *Rename) Name() string {
 	return op.name
+}
+
+func (op *Rename) Label() string {
+	return op.label
 }
 
 func (op *Rename) IsThreadSafe() bool {

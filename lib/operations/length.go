@@ -18,12 +18,23 @@ import (
 
 type Length struct {
 	name      string
+	label     string
 	minLength int
 	maxLength int
 }
 
 func NewLength(data []byte) (*Length, error) {
 	l := Length{name: "length"}
+	// label
+	label, err := jsonparser.GetUnsafeString(data, "label")
+	if err != nil && err != jsonparser.KeyPathNotFoundError {
+		return &l, err
+	}
+	if label == "" {
+		l.label = l.name
+	} else {
+		l.label = label
+	}
 	// minLength
 	minLength, err := jsonparser.GetInt(data, "min_length")
 	if err == jsonparser.KeyPathNotFoundError {
@@ -49,6 +60,10 @@ func (op *Length) Name() string {
 	return op.name
 }
 
+func (op *Length) Label() string {
+	return op.label
+}
+
 func (op *Length) IsThreadSafe() bool {
 	return true
 }
@@ -63,13 +78,13 @@ func (op *Length) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel in
 			if verboseLevel > 2 {
 				fmt.Printf("length r1 too_short %d\n", len(p.R1.Seq))
 			}
-			ot.OpsR1[op.name]["too_short"]++
+			ot.OpsR1[op.label]["too_short"]++
 			return 1
 		} else if op.maxLength != -1 && len(p.R1.Seq) > op.maxLength {
 			if verboseLevel > 2 {
 				fmt.Printf("length r1 too_long %d\n", len(p.R1.Seq))
 			}
-			ot.OpsR1[op.name]["too_long"]++
+			ot.OpsR1[op.label]["too_long"]++
 			return 1
 		} else {
 			return 0
@@ -79,13 +94,13 @@ func (op *Length) Transform(p *fastq.ExtPair, r int, ot *OpStat, verboseLevel in
 			if verboseLevel > 2 {
 				fmt.Printf("length r2 too_short %d\n", len(p.R2.Seq))
 			}
-			ot.OpsR2[op.name]["too_short"]++
+			ot.OpsR2[op.label]["too_short"]++
 			return 1
 		} else if op.maxLength != -1 && len(p.R2.Seq) > op.maxLength {
 			if verboseLevel > 2 {
 				fmt.Printf("length r2 too_long %d\n", len(p.R2.Seq))
 			}
-			ot.OpsR2[op.name]["too_long"]++
+			ot.OpsR2[op.label]["too_long"]++
 			return 1
 		} else {
 			return 0
