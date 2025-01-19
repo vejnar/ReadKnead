@@ -220,6 +220,8 @@ readknead -fq_fnames_r1 "sample2_R1.fastq.zst" \
 |             | length_ligand        | integer   | 0                       | Clip if barcode found                                                                     |
 | length      | min_length           | integer   | -1                      | Minimum read length                                                                       |
 |             | max_length           | integer   | -1                      | Maximum read length                                                                       |
+| quality     | min_quality          | float     | 15.                     | Minimum Phred quality score of qualified bases in the read                                |
+|             | function             | string    | average                 | Function to calculate read quality: *average*
 | random      | probability          | float     | 1.                      | Probability to keep read (between 0 and 1)                                                |
 | rename      | new_name             | string    |                         | New read name                                                                             |
 |             | base36               | boolean   | false                   | Convert read number to shorter base36                                                     |
