@@ -115,7 +115,8 @@ func ApplyOperations(fastqsR1 []string, fastqsR2 []string, fqPathOut string, fqF
 	}
 
 	// Init context
-	ctx, _ := context.WithCancel(context.Background()) // cancelFunc not used
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	// Start sync errgroup
 	g, gctx := errgroup.WithContext(ctx)
 
