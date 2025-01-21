@@ -289,7 +289,7 @@ func NewTrim(data []byte, param param.Parameters) (*Trim, error) {
 	}
 	window, err := jsonparser.GetInt(data, "window")
 	if err == jsonparser.KeyPathNotFoundError {
-		t.window = 5
+		t.window = 4
 	} else if err != nil {
 		return &t, err
 	} else {
