@@ -243,7 +243,7 @@ readknead -fq_fnames_r1 "sample2_R1.fastq.zst" \
 |             | epsilon              | float     | 0.1                     | Maximum mismatch ratio (only for *bktrim* and *bktrim_paired* `algo`)                     |
 |             | epsilon_indel        | float     | 0.03                    | Maximum indel ratio (only for *bktrim* and *bktrim_paired* `algo`)                        |
 |             | min_overlap          | integer   | 3                       | Minimum overlap length (only for *bktrim* and *bktrim_paired* `algo`)                     |
-|             | window               | integer   | 5                       | Length of sliding window for quality trimming (only for *trimqual* `algo`)                |
+|             | window               | integer   | 4                       | Length of sliding window for quality trimming (only for *trimqual* `algo`)                |
 |             | unqualified_prop_max | float     | 0.6                     | Maximum proportion of unqualified bases (only for *trimqual* `algo`)                      |
 |             | min_quality          | integer   | 15                      | Minimum Phred quality score of qualified bases (only for *trimqual* `algo`)               |
 
